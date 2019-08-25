@@ -1,0 +1,5 @@
+<launch>
+	<node pkg="odometry_publisher" type="odometry_publisher_node" name="odometry_publiser"
+		output="screen" required="true"/>
+
+</launch>

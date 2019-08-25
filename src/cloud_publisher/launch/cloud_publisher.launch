@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="cloud_publisher" type="cloud_publisher_node" name="cloud_publisher" output="screen" required="true"/>
+</launch>
