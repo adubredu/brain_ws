@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="map_creator" type="map_creator_node" name="map_creator" output="screen" required="true"/>
+</launch>

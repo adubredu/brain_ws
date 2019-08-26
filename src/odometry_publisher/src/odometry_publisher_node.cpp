@@ -4,7 +4,7 @@
 #include <geometry_msgs/TransformStamped.h>
 
 ros::Publisher odom_pub;
-tf::TransformBroadcaster odom_broadcaster;
+
 double x_offset = 0.22;
 double y_offset = 0.0;
 double z_offset = 0.54; //+0.25 from ground
@@ -12,6 +12,7 @@ double z_offset = 0.54; //+0.25 from ground
 
 void odometryCallback(const nav_msgs::Odometry::ConstPtr& odom_in)
 {
+	tf::TransformBroadcaster odom_broadcaster;
 	geometry_msgs::TransformStamped odom_trans;
 	odom_trans.header.stamp = odom_in->header.stamp;
 	odom_trans.header.frame_id = "map";
