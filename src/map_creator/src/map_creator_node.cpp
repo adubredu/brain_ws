@@ -22,9 +22,7 @@ const int laserCloudStackNum = 10000;
 int laserCloudCount = 0;
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr laserCloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr plannerCloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr dummyCloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr laserCloudStack[laserCloudStackNum];
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZRGB>);
 
 
 
@@ -42,92 +40,11 @@ void passthrough_and_voxel()
 
     pcl::VoxelGrid<pcl::PointXYZRGB> sor;
 
-    pcl::PassThrough<pcl::PointXYZRGB> pass_through_filter;
-    cloud_filtered->clear();
-
-/*
-    //pass through filter
-    pass_through_filter.setInputCloud (plannerCloud);
-    pass_through_filter.setFilterFieldName("z");
-    pass_through_filter.setFilterLimits(-0.7,0.3);
-    pass_through_filter.filter (*cloud_pass);
-
-    // Publish the data
-    sensor_msgs::PointCloud2 pcloud;
-    pcl::toROSMsg(*cloud_pass, pcloud);
-    pcloud.header.frame_id = "/map";
-    to_0_3_pub.publish(pcloud);
-
-
-    // to 1.0
-    pcl::PassThrough<pcl::PointXYZRGB> pass1;
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_pass1(new pcl::PointCloud<pcl::PointXYZRGB>);
-
-    //pass through filter
-    pass1.setInputCloud (plannerCloud);
-    pass1.setFilterFieldName("z");
-    pass1.setFilterLimits(-0.7,1.0);
-    pass1.filter (*cloud_pass1);
-
-    // Publish the data
-    sensor_msgs::PointCloud2 pcloud1;
-    pcl::toROSMsg(*cloud_pass1, pcloud1);
-    pcloud1.header.frame_id = "/map";
-    // pubPassthrough.publish(pcloud);
-    to_1_0_pub.publish(pcloud1);
-
-
-
-
-
-    // to 2.5
-    pcl::PassThrough<pcl::PointXYZRGB> pass2;
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_pass2(new pcl::PointCloud<pcl::PointXYZRGB>);
-
-    //pass through filter
-    pass2.setInputCloud (plannerCloud);
-    pass2.setFilterFieldName("z");
-    pass2.setFilterLimits(-0.7,2.5);
-    pass2.filter (*cloud_pass2);
-
-    // Publish the data
-    sensor_msgs::PointCloud2 pcloud2;
-    pcl::toROSMsg(*cloud_pass2, pcloud2);
-    pcloud2.header.frame_id = "/map";
-    // pubPassthrough.publish(pcloud);
-    to_2_5_pub.publish(pcloud2);
-
-
-
-
-    // to 3.0
-    pcl::PassThrough<pcl::PointXYZRGB> pass3;
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_pass3(new pcl::PointCloud<pcl::PointXYZRGB>);
-
-    //pass through filter
-    pass3.setInputCloud (plannerCloud);
-    pass3.setFilterFieldName("z");
-    pass3.setFilterLimits(-0.7,3.0);
-    pass3.filter (*cloud_pass3);
-
-    // Publish the data
-    sensor_msgs::PointCloud2 pcloud3;
-    pcl::toROSMsg(*cloud_pass3, pcloud3);
-    pcloud3.header.frame_id = "/map";
-    // pubPassthrough.publish(pcloud);
-    to_3_0_pub.publish(pcloud3);
-
-*/
-
-
-    // full
    
-
     // Publish the data
     sensor_msgs::PointCloud2 pcloudf;
     pcl::toROSMsg(*plannerCloud, pcloudf);
     pcloudf.header.frame_id = "/map";
-    // pubPassthrough.publish(pcloud);
     full_pub.publish(pcloudf);
 
 
@@ -144,33 +61,16 @@ void stack_pointcloud()
     for (int i=0; i<laserCloudStackNum; i++)
         *plannerCloud+=*laserCloudStack[i];
 
-    // sensor_msgs::PointCloud2 pcloud;
-    // pcl::toROSMsg(*plannerCloud, pcloud);
-    // pcloud.header.frame_id = "/map";
-    // pubPlannerCloud.publish(pcloud);
-
-    passthrough_and_voxel();
-    // sensor_msgs::PointCloud2 pcloud;
-    // pcl::toROSMsg(*plannerCloud, pcloud);
-    // pcloud.header.frame_id = "/map";
-    // pubPassthrough.publish(pcloud);
+    sensor_msgs::PointCloud2 pcloudf;
+    pcl::toROSMsg(*plannerCloud, pcloudf);
+    pcloudf.header.frame_id = "/map";
+    full_pub.publish(pcloudf);
 }
 
 void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& laserCloud2)
 {
     laserCloud->clear();
-    dummyCloud->clear();
-    pcl::fromROSMsg(*laserCloud2, *dummyCloud);
-    pcl::PointXYZRGB point;
-
-    int size = dummyCloud->points.size();
-    for (int i=0; i<size; i++)
-    {
-    	point.x = dummyCloud->points[i].z;
-        point.y = dummyCloud->points[i].x;
-        point.z = dummyCloud->points[i].y;
-        laserCloud->push_back(point);
-    } 
+    pcl::fromROSMsg(*laserCloud2, *laserCloud);
     stack_pointcloud();
 }
 
@@ -213,16 +113,8 @@ int main (int argc, char** argv)
 	ros::NodeHandle nh;
     init_stack();
 	ros::Subscriber sub = nh.subscribe ("/stark_cloud_registered", 1, pointCloudCallback);
-    // ros::Subscriber savesub = nh.subscribe ("/save_map", 1, saveMapCallback);
-	to_0_3_pub = nh.advertise<sensor_msgs::PointCloud2> ("/0_1_0_3_map", 1);
-	to_1_0_pub = nh.advertise<sensor_msgs::PointCloud2> ("/0_1_1_0_map", 1);
-	to_2_5_pub = nh.advertise<sensor_msgs::PointCloud2> ("/0_1_2_5_map", 1);
-	to_3_0_pub = nh.advertise<sensor_msgs::PointCloud2> ("/0_1_3_0_map", 1);
 	full_pub = nh.advertise<sensor_msgs::PointCloud2> ("/full_map", 1);
-    // pubPlannerCloud = nh.advertise<sensor_msgs::PointCloud2> ("/plannerCloud", 1);
 
-
-	// Spin
 	ros::spin ();
 }
 

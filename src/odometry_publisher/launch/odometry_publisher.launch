@@ -1,5 +1,6 @@
 <launch>
 	<node pkg="odometry_publisher" type="odometry_publisher_node" name="odometry_publiser"
 		output="screen" required="true"/>
+	<include file="$(find odometry_publisher)/launch/broadcast_laser_transform.launch" /> 
 
 </launch>
