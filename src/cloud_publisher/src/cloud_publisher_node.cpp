@@ -56,16 +56,18 @@ void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& laserCloud2)
 	for (int i=0; i<size; i++)
 	{
 		point = laserCloud->points[i];
-		float px = point.x + x_offset;
-		float py = point.y + y_offset;
-		float pz = point.z + z_offset;
+		float px = point.z + x_offset;
+		float py = -point.x + y_offset;
+		float pz = -point.y + z_offset;
 		
 		float rx = px * cosYaw - py * sinYaw;
-		float ry = py * sinYaw + px * cosYaw;
+		float ry = px * sinYaw + py * cosYaw;
 		
 		point.x = rx + robotX;
 		point.y = ry + robotY;
 		point.z = pz;
+
+
 		
 		laserCloudTrans->push_back(point);
 		
