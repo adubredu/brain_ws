@@ -1,2 +1,2 @@
 # brain_ws
-Workspace for the source code for the brain workspace
+Workspace for all the source code for the Cartbot 3.0
