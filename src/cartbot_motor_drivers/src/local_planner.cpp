@@ -198,18 +198,6 @@ void send_chosen_waypoint()
 		in_waypoint.header.frame_id="map";
 		if (not waypoint_forward())
 		{
-			// initialize_occupancy();
-			// score_alternate_waypoints(-goalX,-goalY);
-			// int ind = arg_min(score, num_paths);
-			// double x = occX[ind];
-			// double y = occY[ind];
-			// // in_waypoint.point.x = occX[1];
-			// // in_waypoint.point.y = occY[1];
-			// in_waypoint.point.x =robotX-(x-robotX);
-			// in_waypoint.point.y = robotY-(y-robotY);
-			// // pubPoint.publish(in_waypoint);
-
-
 			std_msgs::Bool backward;
 			backward.data =  true;
 			pubBack.publish(backward);

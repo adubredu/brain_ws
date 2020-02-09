@@ -120,12 +120,12 @@ bool waypoint_forward()
   double y = -pointX * sin(robotYaw) + pointY * cos(robotYaw);
 
   double ang = atan2(x,y);
-  if (ang > 0){
+  if (ang > 0)
     waypoint_forward = true;
-  }
-  else if (ang < 0){
+  
+  else if (ang < 0)
     waypoint_forward = false;
-  }
+  
 
   return waypoint_forward;
 }
@@ -173,58 +173,58 @@ int main(int argc, char** argv)
   	ros::spinOnce();
     if (autonomyMode)
     {
-      float pathDir = atan2((goalY - robotY), (goalX - robotX));
-      float dirDiff = robotYaw - pathDir;
-      if (dirDiff > PI) dirDiff -= 2*PI;
-      else if (dirDiff < -PI) dirDiff += 2*PI;
+		      float pathDir = atan2((goalY - robotY), (goalX - robotX));
+		      float dirDiff = robotYaw - pathDir;
+		      if (dirDiff > PI) dirDiff -= 2*PI;
+		      else if (dirDiff < -PI) dirDiff += 2*PI;
 
-      double joySpeed2 = maxSpeed * autonomySpeed;
+		      double joySpeed2 = maxSpeed * autonomySpeed;
 
-      robotYawRate = dirDiff;
-      if (robotYawRate > maxYawRate) 
-        robotYawRate = maxYawRate;
-      else if (robotYawRate < -maxYawRate) 
-        robotYawRate = -maxYawRate;
+		      robotYawRate = dirDiff;
+		      if (robotYawRate > maxYawRate) 
+		        robotYawRate = maxYawRate;
+		      else if (robotYawRate < -maxYawRate) 
+		        robotYawRate = -maxYawRate;
 
-      robotYawRate *= autonomySpeed;
+		      robotYawRate *= autonomySpeed;
 
-      if (robotSpeed < joySpeed2) robotSpeed += maxAccel / 100.0;
-      else if (robotSpeed > joySpeed2) robotSpeed -= maxAccel / 100.0;
+		      if (robotSpeed < joySpeed2) robotSpeed += maxAccel / 100.0;
+		      else if (robotSpeed > joySpeed2) robotSpeed -= maxAccel / 100.0;
 
-      if (not waypoint_forward())
-        robotSpeed = 0;
+		      if (not waypoint_forward())
+		        robotSpeed = 0;
 
-      if (wp_backward)
-      {
-        robotSpeed = 0;
-        robotYawRate = 1;
-        ROS_INFO("Turning");
-      }
+		      if (wp_backward)
+		      {
+		        robotSpeed = 0;
+		        robotYawRate = 1;
+		        ROS_INFO("Turning");
+		      }
 
-      if (goalReached())
-      {
-          robotSpeed = 0;
-          robotYawRate = 0;
-      }
+		      if (goalReached())
+		      {
+		          robotSpeed = 0;
+		          robotYawRate = 0;
+		      }
 
     }
 
     else
     {
-      float joySpeed2 = maxSpeed * joySpeed;
-      robotYawRate = joyYaw;
+		      float joySpeed2 = maxSpeed * joySpeed;
+		      robotYawRate = joyYaw;
 
-       if (joySpeed != 0)
-       {
-         if (robotSpeed < joySpeed2) robotSpeed += maxAccel / 100.0;
-         else if (robotSpeed > joySpeed2) robotSpeed -= maxAccel / 100.0;
-       }
+		       if (joySpeed != 0)
+		       {
+		         if (robotSpeed < joySpeed2) robotSpeed += maxAccel / 100.0;
+		         else if (robotSpeed > joySpeed2) robotSpeed -= maxAccel / 100.0;
+		       }
 
-       else if (joySpeed == 0)
-         robotSpeed= 0;
-      
-        if (joyYaw == 0)
-          robotYawRate = 0;
+		       else if (joySpeed == 0)
+		         robotSpeed= 0;
+		      
+		        if (joyYaw == 0)
+		          robotYawRate = 0;
     }
   	
  	 cmd_spd.linear.x = robotSpeed;
