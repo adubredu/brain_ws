@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=true
+TerminalOptions=bash
+Exec=bash -c "roscore & sleep 1; source /home/ubuntu/motor_ws/devel/setup.bash; roslaunch ps3joy ps3.launch & sleep 1; python object_picker_ws/joystick_interface.py & rosrun cartbot_motor_drivers pathfollower & sleep 1; python3 /home/ubuntu/motor_ws/src/cartbot_motor_drivers/src/start_motors.py"
+Icon=/home/ubuntu/Documents/icon.jpg
+Name=START
+Name[en_US]=START 
