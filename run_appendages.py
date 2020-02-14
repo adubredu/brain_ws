@@ -4,8 +4,8 @@ import serial
 import time
 from sensor_msgs.msg import Joy
 
-port="/dev/ttyACM1"
-gport="/dev/ttyACM0"
+port="/dev/elevator"
+gport="/dev/gripper"
 ser=serial.Serial(port,9600)
 gser = serial.Serial(gport,9600);
 gser.flushInput
