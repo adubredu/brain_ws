@@ -52,8 +52,8 @@ void scanHandler(const sensor_msgs::LaserScan::ConstPtr& scan_in)
 	pcl::fromROSMsg(cloud, *laserCloud);
 	pcl::PointXYZI point;
 	int size = laserCloud->points.size();
-	double cosYaw = cos(robotYaw);
-	double sinYaw = sin(robotYaw);
+	double cosYaw = cos(robotYaw+1.57);
+	double sinYaw = sin(robotYaw+1.57);
 
 	for (int i=0; i<size; i++)
 	{
@@ -73,7 +73,7 @@ void scanHandler(const sensor_msgs::LaserScan::ConstPtr& scan_in)
 	sensor_msgs::PointCloud2 cloud_out;
 	pcl::toROSMsg(*transformedCloud, cloud_out);
 	cloud_out.header.stamp = ros::Time().fromSec(odomTime);
-	cloud_out.header.frame_id = "/map";
+	cloud_out.header.frame_id = "/odom";
 	laserpub.publish(cloud_out);
 
 }
