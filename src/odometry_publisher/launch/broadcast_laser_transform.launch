@@ -1,3 +1,4 @@
 <launch>
+	<node pkg="tf" type="static_transform_publisher" name="cameraOdom_to_odom_transform" args="0 0  0 0 0 0 /camera_odom_frame /odom 5" />
 	<node pkg="tf" type="static_transform_publisher" name="rplidar_to_baselink_transform" args="0.18 0  -0.11 0 0 0 /base_link /laser 5" />
 </launch>

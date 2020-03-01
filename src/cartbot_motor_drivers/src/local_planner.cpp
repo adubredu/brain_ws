@@ -195,7 +195,7 @@ void send_chosen_waypoint()
 {
 	if (waypoint_received)
 	{
-		in_waypoint.header.frame_id="map";
+		in_waypoint.header.frame_id="odom";
 		if (not waypoint_forward())
 		{
 			std_msgs::Bool backward;
@@ -232,7 +232,7 @@ void display_alternate_paths()
 	double cosYaw = cos(robotYaw);
 
 	geometry_msgs::PoseArray paths;
-	paths.header.frame_id = "map";
+	paths.header.frame_id = "odom";
 	paths.poses.resize(num_paths);
 
 	waypoints->clear();
@@ -269,7 +269,7 @@ void display_alternate_paths()
 	pubAltPath.publish(paths);
 	sensor_msgs::PointCloud2 wp;
 	pcl::toROSMsg(*waypoints, wp);
-	wp.header.frame_id = "map";
+	wp.header.frame_id = "odom";
 	pubAltWaypoints.publish(wp);
 
 }
