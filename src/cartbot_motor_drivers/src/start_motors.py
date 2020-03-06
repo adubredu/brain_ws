@@ -11,6 +11,7 @@ from std_msgs.msg import Float32
 from std_msgs.msg import Int32, String
 from geometry_msgs.msg import Twist 
 import odrive
+import time
 from odrive.enums import *
 
 #############################################################
@@ -31,8 +32,8 @@ class SendSpeedToMotors():
 
         self.cart_width = 0.64
         self.wheel_diameter = 0.16
-        self.speed_gain = 60
-        self.fine_increment = 3
+        self.speed_gain = 15
+        self.fine_increment = 5
 
         rospy.Subscriber('cmd_vel', Twist, self.twistCallback)
         rospy.Subscriber('fine_motion', String, self.finemotionCallback)
@@ -46,24 +47,43 @@ class SendSpeedToMotors():
         self.my_drive.axis1.controller.vel_setpoint = -left_motor_speed
         self.my_drive.axis0.controller.vel_setpoint = right_motor_speed
 
-
+    def stop(self):
+        time.sleep(0.5)
+        self.my_drive.axis1.controller.vel_setpoint = 0
+        self.my_drive.axis0.controller.vel_setpoint = 0
 
     def finemotionCallback(self, data):
         if data.data == 'forward':
-            self.my_drive.axis0.controller.move_incremental(self.fine_increment,False)
-            self.my_drive.axis1.controller.move_incremental(-self.fine_increment,False)
+            #self.my_drive.axis0.controller.move_incremental(self.fine_increment,True)
+            #self.my_drive.axis1.controller.move_incremental(-self.fine_increment,True)
+
+            self.my_drive.axis0.controller.vel_setpoint = self.fine_increment
+            self.my_drive.axis1.controller.vel_setpoint = -self.fine_increment
+            self.stop()
 		
         elif data.data == 'backward':
-            self.my_drive.axis0.controller.move_incremental(-self.fine_increment,False)
-            self.my_drive.axis1.controller.move_incremental(self.fine_increment,False)
+            #self.my_drive.axis0.controller.move_incremental(-self.fine_increment,True)
+            #self.my_drive.axis1.controller.move_incremental(self.fine_increment,True)
+        
+            self.my_drive.axis0.controller.vel_setpoint = -self.fine_increment
+            self.my_drive.axis1.controller.vel_setpoint = self.fine_increment
+            self.stop()
 		
         elif data.data == 'left':
-            self.my_drive.axis0.controller.move_incremental(self.fine_increment,False)
-            self.my_drive.axis1.controller.move_incremental(self.fine_increment,False)
+            #self.my_drive.axis0.controller.move_incremental(self.fine_increment,True)
+            #self.my_drive.axis1.controller.move_incremental(self.fine_increment,True)
+
+            self.my_drive.axis0.controller.vel_setpoint = self.fine_increment
+            self.my_drive.axis1.controller.vel_setpoint = self.fine_increment
+            self.stop()
 
         elif data.data == 'right':
-            self.my_drive.axis0.controller.move_incremental(-self.fine_increment,False)
-            self.my_drive.axis1.controller.move_incremental(-self.fine_increment,False)
+            #self.my_drive.axis0.controller.move_incremental(-self.fine_increment,True)
+            #self.my_drive.axis1.controller.move_incremental(-self.fine_increment,True)
+
+            self.my_drive.axis0.controller.vel_setpoint = -self.fine_increment
+            self.my_drive.axis1.controller.vel_setpoint = -self.fine_increment
+            self.stop()
 
 
 
